@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enkel CMS-simulering</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 10px;
+        }
+
+        input, textarea {
+            margin-bottom: 10px;
+            padding: 5px;
+        }
+
+        #editableText {
+            border: 1px solid #ccc;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <h1>Enkel CMS-simulering</h1>
+    <form id="form">
+        <div id="editableText" contenteditable="true" placeholder="Skriv din tekst her"></div>
+
+        <label for="imageInput">Velg bilde:</label>
+        <input type="file" id="imageInput" accept="image/*">
+
+        <button type="button" onclick="updateContent()">Oppdater</button>
+        <button type="button" onclick="deleteContent()">Slett innhold</button>
+        <button type="button" onclick="saveContent()">Lagre innhold</button>
+        <button type="button" onclick="loadContent()">Last inn siste lagrede innhold</button>
+    </form>
+
+    <div id="content">
+        <img id="mainImage" src="https://via.placeholder.com/300" alt="Standardbilde">
+    </div>
+</div>
+
+<script>
+    function updateContent() {
+        var editedText = document.getElementById("editableText").innerText;
+        var newImage = document.getElementById("imageInput").files[0];
+
+        var h1Element = document.querySelector("h1");
+        var pElement = document.querySelector("#editableText");
+
+        h1Element.innerText = editedText;
+        pElement.innerText = editedText;
+
+        if (newImage) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById("mainImage").src = e.target.result;
+            };
+            reader.readAsDataURL(newImage);
+        }
+    }
+
+    function deleteContent() {
+        var textElement = document.getElementById("editableText");
+        var imageElement = document.getElementById("mainImage");
+
+        textElement.innerText = "";
+        imageElement.src = "https://via.placeholder.com/300";
+        document.getElementById("imageInput").value = "";
+    }
+
+    function saveContent() {
+        var editedText = document.getElementById("editableText").innerText;
+        var imageUrl = document.getElementById("mainImage").src;
+
+        var savedContent = {
+            text: editedText,
+            image: imageUrl
+        };
+
+        localStorage.setItem("savedContent", JSON.stringify(savedContent));
+        alert("Innholdet er lagret!");
+    }
+
+    function loadContent() {
+        var savedContent = localStorage.getItem("savedContent");
+
+        if (savedContent) {
+            savedContent = JSON.parse(savedContent);
+
+            document.getElementById("editableText").innerText = savedContent.text;
+            document.getElementById("mainImage").src = savedContent.image;
+
+            alert("Innholdet er lastet inn!");
+        } else {
+            alert("Ingen lagret innhold funnet.");
+        }
+    }
+</script>
+
+</body>
+</html>
